@@ -1,0 +1,62 @@
+[
+  {
+    "id": "clear-bath",
+    "note": "The monitor at the Bath office has a cracked screen. Could someone visit Thursday morning?",
+    "expected": {
+      "site": "Bath office",
+      "issue": ["Monitor has a cracked screen", "Cracked monitor screen"],
+      "requestedTiming": "Thursday morning",
+      "siteNeedsReview": false
+    }
+  },
+  {
+    "id": "clear-exeter",
+    "note": "The label printer at the Exeter depot is jammed. Please send someone Tuesday afternoon.",
+    "expected": {
+      "site": "Exeter depot",
+      "issue": ["Label printer is jammed", "Jammed label printer"],
+      "requestedTiming": "Tuesday afternoon",
+      "siteNeedsReview": false
+    }
+  },
+  {
+    "id": "missing-site",
+    "note": "The scanner will not power on. Could someone come Monday morning?",
+    "expected": {
+      "site": "",
+      "issue": ["Scanner will not power on", "Scanner won't power on"],
+      "requestedTiming": "Monday morning",
+      "siteNeedsReview": true
+    }
+  },
+  {
+    "id": "missing-timing",
+    "note": "The projector at the Reading office keeps shutting down.",
+    "expected": {
+      "site": "Reading office",
+      "issue": ["Projector keeps shutting down", "Projector shuts down repeatedly"],
+      "requestedTiming": "",
+      "siteNeedsReview": false
+    }
+  },
+  {
+    "id": "reporter-in-another-city",
+    "note": "The printer at the Bristol depot is jammed. Our Cardiff team reported it.",
+    "expected": {
+      "site": "Bristol depot",
+      "issue": ["Printer is jammed", "Jammed printer"],
+      "requestedTiming": "",
+      "siteNeedsReview": false
+    }
+  },
+  {
+    "id": "conflicting-service-sites",
+    "note": "The scanner has a broken screen. The ticket says it is at the Derby depot, but the handover says it is at the Nottingham depot.",
+    "expected": {
+      "site": "",
+      "issue": ["Scanner has a broken screen", "Broken scanner screen"],
+      "requestedTiming": "",
+      "siteNeedsReview": true
+    }
+  }
+]
