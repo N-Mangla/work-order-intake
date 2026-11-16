@@ -1,0 +1,127 @@
+[
+  {
+    "id": "clear-york",
+    "note": "The barcode reader at the York dispatch centre keeps disconnecting. Please visit Wednesday morning.",
+    "expected": { "site": "York dispatch centre", "issue": ["Barcode reader keeps disconnecting", "Barcode reader disconnects repeatedly"], "requestedTiming": "Wednesday morning", "siteNeedsReview": false }
+  },
+  {
+    "id": "clear-cambridge",
+    "note": "At the Cambridge lab, the label printer is leaving blank stripes. Could someone come after lunch on Friday?",
+    "expected": { "site": "Cambridge lab", "issue": ["Label printer is leaving blank stripes", "Label printer leaves blank stripes"], "requestedTiming": "after lunch on Friday", "siteNeedsReview": false }
+  },
+  {
+    "id": "clear-oxford",
+    "note": "Please send a technician to the Oxford reception desk before 10 am tomorrow. The visitor kiosk freezes at sign-in.",
+    "expected": { "site": "Oxford reception desk", "issue": ["Visitor kiosk freezes at sign-in", "Visitor kiosk freezes during sign-in"], "requestedTiming": "before 10 am tomorrow", "siteNeedsReview": false }
+  },
+  {
+    "id": "clear-brighton",
+    "note": "At the Brighton branch, the card terminal restarts after every payment. Any time next week is fine.",
+    "expected": { "site": "Brighton branch", "issue": ["Card terminal restarts after every payment", "Card terminal reboots after every payment"], "requestedTiming": "Any time next week", "siteNeedsReview": false }
+  },
+  {
+    "id": "clear-swindon",
+    "note": "Could you come between 2 and 4 pm on Thursday? The meeting-room display at the Swindon office flickers.",
+    "expected": { "site": "Swindon office", "issue": ["Meeting-room display flickers", "Meeting room display flickers"], "requestedTiming": "between 2 and 4 pm on Thursday", "siteNeedsReview": false }
+  },
+  {
+    "id": "clear-derry",
+    "note": "The intercom at the Derry warehouse has no audio. Please attend as soon as possible.",
+    "expected": { "site": "Derry warehouse", "issue": ["Intercom has no audio", "Intercom has no sound"], "requestedTiming": "as soon as possible", "siteNeedsReview": false }
+  },
+  {
+    "id": "clear-norwich",
+    "note": "The time clock at the Norwich store is stuck on its startup screen. Please visit on 24 November at 9:30 am.",
+    "expected": { "site": "Norwich store", "issue": ["Time clock is stuck on its startup screen", "Time clock is stuck on the startup screen"], "requestedTiming": "on 24 November at 9:30 am", "siteNeedsReview": false }
+  },
+  {
+    "id": "clear-plymouth",
+    "note": "The receipt printer at the Plymouth showroom is feeding paper sideways. Please come first thing Monday.",
+    "expected": { "site": "Plymouth showroom", "issue": ["Receipt printer is feeding paper sideways", "Receipt printer feeds paper sideways"], "requestedTiming": "first thing Monday", "siteNeedsReview": false }
+  },
+  {
+    "id": "missing-site-camera",
+    "note": "The meeting-room camera shows a black screen. Could someone look at it this afternoon?",
+    "expected": { "site": "", "issue": ["Meeting-room camera shows a black screen", "Meeting room camera shows a black screen"], "requestedTiming": "this afternoon", "siteNeedsReview": true }
+  },
+  {
+    "id": "missing-site-printer",
+    "note": "The label printer keeps printing blank labels. Please visit before closing.",
+    "expected": { "site": "", "issue": ["Label printer keeps printing blank labels", "Label printer prints blank labels"], "requestedTiming": "before closing", "siteNeedsReview": true }
+  },
+  {
+    "id": "missing-site-timing",
+    "note": "The delivery scanner cannot read QR codes. Can someone take a look?",
+    "expected": { "site": "", "issue": ["Delivery scanner cannot read QR codes", "Delivery scanner can't read QR codes"], "requestedTiming": "", "siteNeedsReview": true }
+  },
+  {
+    "id": "missing-timing-chester",
+    "note": "The door buzzer at the Chester office does not ring.",
+    "expected": { "site": "Chester office", "issue": ["Door buzzer does not ring", "Door buzzer doesn't ring"], "requestedTiming": "", "siteNeedsReview": false }
+  },
+  {
+    "id": "missing-timing-worcester",
+    "note": "The self-checkout screen at the Worcester shop is unresponsive.",
+    "expected": { "site": "Worcester shop", "issue": ["Self-checkout screen is unresponsive", "Self-checkout screen does not respond"], "requestedTiming": "", "siteNeedsReview": false }
+  },
+  {
+    "id": "missing-issue-swansea",
+    "note": "Please book a technician for the Swansea office on Wednesday afternoon. I will send the fault details later.",
+    "expected": { "site": "Swansea office", "issue": [""], "requestedTiming": "on Wednesday afternoon", "siteNeedsReview": false }
+  },
+  {
+    "id": "missing-issue-lincoln",
+    "note": "Can we arrange a service visit to the Lincoln depot? We are still waiting for the fault report.",
+    "expected": { "site": "Lincoln depot", "issue": [""], "requestedTiming": "", "siteNeedsReview": false }
+  },
+  {
+    "id": "reporter-first",
+    "note": "Our Glasgow team logged this ticket. The ticket printer that keeps jamming is at the Dundee depot. Could someone visit on Tuesday?",
+    "expected": { "site": "Dundee depot", "issue": ["Ticket printer keeps jamming", "Ticket printer jams repeatedly"], "requestedTiming": "on Tuesday", "siteNeedsReview": false }
+  },
+  {
+    "id": "reporter-last",
+    "note": "The touch panel at the Hull office no longer responds. The Sheffield help desk forwarded the request.",
+    "expected": { "site": "Hull office", "issue": ["Touch panel no longer responds", "Touch panel is unresponsive"], "requestedTiming": "", "siteNeedsReview": false }
+  },
+  {
+    "id": "reporter-only",
+    "note": "The Aberdeen support team logged a dead monitor. They do not know which branch has the monitor. Could someone come Friday morning?",
+    "expected": { "site": "", "issue": ["Dead monitor", "Monitor does not work", "Monitor is dead"], "requestedTiming": "Friday morning", "siteNeedsReview": true }
+  },
+  {
+    "id": "corrected-location",
+    "note": "Correction to the earlier ticket. The projector that will not turn on is at the Milton Keynes office. The earlier ticket listed Luton. Please visit tomorrow morning.",
+    "expected": { "site": "Milton Keynes office", "issue": ["Projector will not turn on", "Projector won't turn on"], "requestedTiming": "tomorrow morning", "siteNeedsReview": false }
+  },
+  {
+    "id": "previous-location",
+    "note": "The ticket kiosk moved from the Newport branch to the Cardiff branch last month. It now freezes when printing tickets.",
+    "expected": { "site": "Cardiff branch", "issue": ["Ticket kiosk freezes when printing tickets", "Ticket kiosk freezes while printing tickets"], "requestedTiming": "", "siteNeedsReview": false }
+  },
+  {
+    "id": "ambiguous-two-depots",
+    "note": "The handheld scanner is stuck in a reboot loop. It could be at either the Bolton depot or the Wigan depot. Please visit after 3 pm.",
+    "expected": { "site": "", "issue": ["Handheld scanner is stuck in a reboot loop", "Handheld scanner keeps rebooting"], "requestedTiming": "after 3 pm", "siteNeedsReview": true }
+  },
+  {
+    "id": "conflicting-records",
+    "note": "Dispatch lists the faulty card reader at the Stirling shop, but the asset register lists it at the Falkirk shop. The card reader rejects every card.",
+    "expected": { "site": "", "issue": ["Card reader rejects every card", "Card reader is rejecting every card"], "requestedTiming": "", "siteNeedsReview": true }
+  },
+  {
+    "id": "ambiguous-two-sites-both-faulty",
+    "note": "The label printers at the Rugby depot and the Nuneaton depot are both jammed. We need one visit this week and have not picked which depot yet.",
+    "expected": { "site": "", "issue": ["Label printers are jammed", "Both label printers are jammed", "Jammed label printers"], "requestedTiming": "this week", "siteNeedsReview": true }
+  },
+  {
+    "id": "location-priority",
+    "note": "The kiosk at the Poole store is working again. Please go to the Bournemouth store instead. Its kiosk still has a blank display. Late afternoon is best.",
+    "expected": { "site": "Bournemouth store", "issue": ["Kiosk has a blank display", "Kiosk display is blank", "Kiosk still has a blank display"], "requestedTiming": "Late afternoon", "siteNeedsReview": false }
+  },
+  {
+    "id": "unnamed-location",
+    "note": "The monitor in our other office goes black every few minutes. Could someone come after the morning meeting?",
+    "expected": { "site": "", "issue": ["Monitor goes black every few minutes", "Monitor screen goes black every few minutes"], "requestedTiming": "after the morning meeting", "siteNeedsReview": true }
+  }
+]
