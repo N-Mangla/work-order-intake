@@ -9,6 +9,7 @@ export type Draft = {
   fields: WorkOrderFields;
   requestedTiming: string;
   siteExcerpts: readonly string[];
+  siteReviewReason: string | null;
 };
 
 export type ApprovedOrder = WorkOrderFields & { id: string };

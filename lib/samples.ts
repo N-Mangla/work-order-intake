@@ -11,6 +11,7 @@ const leedsDraft: Draft = {
   },
   requestedTiming: "Friday afternoon",
   siteExcerpts: ["at the Leeds office"],
+  siteReviewReason: null,
 };
 
 export const samples: readonly Sample[] = [
@@ -26,6 +27,8 @@ export const samples: readonly Sample[] = [
       ...leedsDraft,
       fields: { ...leedsDraft.fields, site: "Bradford" },
       siteExcerpts: ["at the Leeds office", "Our Bradford team reported it"],
+      siteReviewReason:
+        "The request mentions two locations. Confirm where the printer needs service.",
     },
   },
 ];
