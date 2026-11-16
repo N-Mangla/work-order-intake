@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { findSample, samples } from "../lib/samples";
+import { samples } from "../lib/samples";
 import {
   validateApproval,
   type ApprovalErrors,
@@ -36,8 +36,9 @@ function isApprovedOrder(value: unknown): value is ApprovedOrder {
 
 export default function Home() {
   const [note, setNote] = useState("");
-  const [review, setReview] = useState<{ note: string; draft: Draft } | null>(null);
+  const [review, setReview] = useState<{ note: string; draft: Draft, source: "sample" | "live" } | null>(null);
   const [inputError, setInputError] = useState("");
+  const [isExtracting, setIsExtracting] = useState(false);
   const [orders, setOrders] = useState<ApprovedOrder[]>([]);
   const [storageError, setStorageError] = useState("");
   const [status, setStatus] = useState("");
@@ -66,19 +67,50 @@ export default function Home() {
     if (status) noteRef.current?.focus();
   }, [status]);
 
-  function createDraft(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const sample = findSample(note);
-    if (!sample) {
-      setInputError(note.trim()
-        ? "Sample mode supports the two demo requests. Choose an example or paste its full text."
-        : "Paste a service request or choose an example.");
-      noteRef.current?.focus();
+async function createDraft(event: FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+
+  if (isExtracting) return;
+
+  if (!note.trim()) {
+    setInputError("Paste a service request or choose an example.");
+    noteRef.current?.focus();
+    return;
+  }
+
+  setInputError("");
+  setStatus("");
+  setIsExtracting(true);
+
+  try {
+    const response = await fetch("/api/extract", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ note }),
+    });
+
+    const result: {
+      draft?: Draft;
+      source?: "sample" | "live";
+      error?: string;
+    } = await response.json();
+
+    if (
+      !response.ok ||
+      !result.draft ||
+      (result.source !== "sample" && result.source !== "live")
+    ) {
+      setInputError(result.error ?? "Could not create a draft. Try again.");
       return;
     }
-    setStatus("");
-    setReview({ note, draft: sample.draft });
+
+    setReview({ note, draft: result.draft, source: result.source });
+  } catch {
+    setInputError("Could not reach the extraction service. Try again.");
+  } finally {
+    setIsExtracting(false);
   }
+}
 
   function approve(fields: WorkOrderFields) {
     try {
@@ -98,7 +130,11 @@ export default function Home() {
   return (
     <main>
       <header className="page-header">
-        <span className="mode">Sample mode</span>
+        {review && (
+  <span className="mode">
+    {review.source === "live" ? "Generated locally" : "Sample draft"}
+  </span>
+)}
         <h1>Work order intake</h1>
         <p>Turn a service request into a draft you can check and approve.</p>
       </header>
@@ -139,7 +175,9 @@ export default function Home() {
               }}
             />
             {inputError && <p id="request-error" className="error" role="alert">{inputError}</p>}
-            <button type="submit">Create draft</button>
+            <button type="submit" disabled={isExtracting}>
+  {isExtracting ? "Creating draft…" : "Create draft"}
+</button>
           </form>
         </section>
       )}
@@ -187,7 +225,7 @@ function ReviewForm({
   const headingRef = useRef<HTMLHeadingElement>(null);
   const siteConfirmationRef = useRef<HTMLInputElement>(null);
 
-  const requiresSiteConfirmation = draft.siteExcerpts.length > 1;
+  const requiresSiteConfirmation = draft.siteReviewReason !== null;
   const needsSiteConfirmation = requiresSiteConfirmation && !siteConfirmed;
   const showSiteConfirmationError = attempted && needsSiteConfirmation;
   const errors: ApprovalErrors = attempted ? validateApproval(fields) : {};
@@ -300,8 +338,7 @@ function ReviewForm({
                   {hasSiteReview && (
                     <>
                       <p id="site-review-hint" className="muted">
-                        The request mentions two locations. Confirm where the
-                        printer needs service.
+                        {draft.siteReviewReason}
                       </p>
 
                       <label className="site-confirmation">
