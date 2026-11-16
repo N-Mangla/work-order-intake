@@ -36,7 +36,7 @@ function isApprovedOrder(value: unknown): value is ApprovedOrder {
 
 export default function Home() {
   const [note, setNote] = useState("");
-  const [review, setReview] = useState<{ note: string; draft: Draft } | null>(null);
+  const [review, setReview] = useState<{ note: string; draft: Draft, source: "sample" | "live" } | null>(null);
   const [inputError, setInputError] = useState("");
   const [isExtracting, setIsExtracting] = useState(false);
   const [orders, setOrders] = useState<ApprovedOrder[]>([]);
@@ -89,14 +89,22 @@ async function createDraft(event: FormEvent<HTMLFormElement>) {
       body: JSON.stringify({ note }),
     });
 
-    const result: { draft?: Draft; error?: string } = await response.json();
+    const result: {
+      draft?: Draft;
+      source?: "sample" | "live";
+      error?: string;
+    } = await response.json();
 
-    if (!response.ok || !result.draft) {
+    if (
+      !response.ok ||
+      !result.draft ||
+      (result.source !== "sample" && result.source !== "live")
+    ) {
       setInputError(result.error ?? "Could not create a draft. Try again.");
       return;
     }
 
-    setReview({ note, draft: result.draft });
+    setReview({ note, draft: result.draft, source: result.source });
   } catch {
     setInputError("Could not reach the extraction service. Try again.");
   } finally {
@@ -122,7 +130,11 @@ async function createDraft(event: FormEvent<HTMLFormElement>) {
   return (
     <main>
       <header className="page-header">
-        <span className="mode">Sample mode</span>
+        {review && (
+  <span className="mode">
+    {review.source === "live" ? "Generated locally" : "Sample draft"}
+  </span>
+)}
         <h1>Work order intake</h1>
         <p>Turn a service request into a draft you can check and approve.</p>
       </header>
