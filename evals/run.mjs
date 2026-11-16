@@ -37,9 +37,9 @@ for (const { id, note, expected } of requests) {
 
   const { fields, requestedTiming, siteReviewReason } = result.draft;
   const siteCorrect = normalize(fields.site) === normalize(expected.site);
-const issueMatched = expected.issue.some(
-  (wording) => normalizeIssue(fields.issue) === normalizeIssue(wording),
-);
+  const issueMatched = expected.issue.some(
+    (wording) => normalizeIssue(fields.issue) === normalizeIssue(wording),
+  );
   const timingCorrect = normalize(requestedTiming) === normalize(expected.requestedTiming);
 
   const needsSiteReview = expected.siteNeedsReview || !siteCorrect;
