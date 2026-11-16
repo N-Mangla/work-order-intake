@@ -3,7 +3,10 @@ import { findSample } from "../../../lib/samples";
 import type { Draft } from "../../../lib/work-orders";
 
 const requestSchema = z.object({
-  note: z.string().trim().min(1).max(4_000),
+  note: z.string().trim().min(1).max(4_000).refine(
+    (note) => /\p{L}{2}/u.test(note),
+    "Describe the work needed, for example: “PC won’t boot.”",
+  ),
 });
 
 const extractionSchema = z.object({
@@ -34,6 +37,11 @@ const extractionInstructions = [
   "Set ambiguousSite to true when the note gives conflicting service locations or it is unclear which location needs service.",
 ].join(" ");
 
+function normalizeExtractedText(value: string | null): string {
+  const text = value?.trim() ?? "";
+  return text.toLowerCase() === "null" ? "" : text;
+}
+
 export async function POST(request: Request) {
   let body: unknown;
 
@@ -45,12 +53,16 @@ export async function POST(request: Request) {
 
   const result = requestSchema.safeParse(body);
 
-  if (!result.success) {
+    if (!result.success) {
     return Response.json(
-      { error: "Enter a service request of 1–4,000 characters." },
-      { status: 400 },
+        {
+        error:
+            result.error.issues[0]?.message ??
+            "Enter a service request of 1–4,000 characters.",
+        },
+        { status: 400 },
     );
-  }
+    }
 
   const { note } = result.data;
   const sample = findSample(note);
@@ -96,8 +108,8 @@ export async function POST(request: Request) {
     const { message } = ollamaResponseSchema.parse(await response.json());
     const extracted = extractionSchema.parse(JSON.parse(message.content));
 
-    const site = extracted.site?.trim() ?? "";
-    const timing = extracted.requestedTiming?.trim() ?? "";
+    const site = normalizeExtractedText(extracted.site);
+    const timing = normalizeExtractedText(extracted.requestedTiming);
     const siteExcerpts = [
       ...new Set(
         extracted.siteExcerpts.filter(
@@ -124,7 +136,7 @@ export async function POST(request: Request) {
     const draft: Draft = {
       fields: {
         site,
-        issue: extracted.issue?.trim() ?? "",
+        issue: normalizeExtractedText(extracted.issue),
         scheduledDate: "",
         scheduledTime: "",
       },

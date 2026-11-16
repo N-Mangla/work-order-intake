@@ -283,27 +283,40 @@ function ReviewForm({
           <h3>Original request</h3>
           <blockquote>{note}</blockquote>
 
-          <h3>Site mentions</h3>
-          <ul>
-            {draft.siteExcerpts.map((excerpt) => (
-              <li key={excerpt}>
-                <q>{excerpt}</q>
-              </li>
-            ))}
-          </ul>
+          {draft.siteExcerpts.length > 0 && (
+            <>
+              <h3>Site mentions</h3>
+              <ul>
+                {draft.siteExcerpts.map((excerpt) => (
+                  <li key={excerpt}>
+                    <q>{excerpt}</q>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </aside>
 
         <form onSubmit={submit} noValidate>
           <p className="notice">
-            Requested timing: <q>{draft.requestedTiming}</q>. Confirm the exact
-            date and time.
+            {draft.requestedTiming.trim() ? (
+              <>
+                Requested timing: <q>{draft.requestedTiming}</q>. Confirm the exact date
+                and time.
+              </>
+            ) : (
+              "No timing specified. Enter the appointment date and time."
+            )}
           </p>
 
           <div className="fields">
             {reviewFields.map(({ name, label, type }) => {
               const hasSiteReview =
                 name === "site" && requiresSiteConfirmation;
+              const showIssueHint =
+                name === "issue" && !fields.issue.trim() && !errors.issue;
               const descriptionIds = [
+                showIssueHint ? "issue-review-hint" : null,
                 hasSiteReview ? "site-review-hint" : null,
                 errors[name] ? `${name}-error` : null,
               ]
@@ -328,6 +341,12 @@ function ReviewForm({
                     aria-describedby={descriptionIds || undefined}
                     onChange={(event) => updateField(name, event.target.value)}
                   />
+
+                  {showIssueHint && (
+                    <p id="issue-review-hint" className="muted">
+                      Describe the fault or work needed before approving.
+                    </p>
+                  )}
 
                   {errors[name] && (
                     <p id={`${name}-error`} className="error" role="alert">
