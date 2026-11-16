@@ -1,8 +1,9 @@
 import { readFile } from "node:fs/promises";
 
-const requests = JSON.parse(
-  await readFile(new URL("./requests.json", import.meta.url), "utf8"),
-);
+const requestsFile =
+  process.argv[2] ?? new URL("./requests.json", import.meta.url);
+
+const requests = JSON.parse(await readFile(requestsFile, "utf8"));
 
 const endpoint = process.env.EVAL_URL ?? "http://localhost:3000/api/extract";
 
@@ -52,6 +53,7 @@ const issueMatched = expected.issue.some(
     needsSiteReview,
     siteFlagged,
     missedSiteReview: needsSiteReview && !siteFlagged,
+    unnecessarySiteReview: !needsSiteReview && siteFlagged,
     actualSite: fields.site,
     actualIssue: fields.issue,
     actualTiming: requestedTiming,
@@ -67,4 +69,7 @@ console.log(`Issue wording matches: ${count("issueMatched")}/${rows.length}`);
 console.log(`Timing matches: ${count("timingCorrect")}/${rows.length}`);
 console.log(
   `Missed site review flags: ${count("missedSiteReview")}/${count("needsSiteReview")}`,
+);
+console.log(
+  `Unnecessary site review flags: ${count("unnecessarySiteReview")}/${rows.length - count("needsSiteReview")}`,
 );
