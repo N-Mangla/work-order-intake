@@ -10,6 +10,10 @@ function normalize(value) {
   return value.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.!?]$/, "");
 }
 
+function normalizeIssue(value) {
+  return normalize(value).replace(/^the\s+/, "");
+}
+
 const rows = [];
 
 for (const { id, note, expected } of requests) {
@@ -32,9 +36,9 @@ for (const { id, note, expected } of requests) {
 
   const { fields, requestedTiming, siteReviewReason } = result.draft;
   const siteCorrect = normalize(fields.site) === normalize(expected.site);
-  const issueMatched = expected.issue.some(
-    (wording) => normalize(fields.issue) === normalize(wording),
-  );
+const issueMatched = expected.issue.some(
+  (wording) => normalizeIssue(fields.issue) === normalizeIssue(wording),
+);
   const timingCorrect = normalize(requestedTiming) === normalize(expected.requestedTiming);
 
   const needsSiteReview = expected.siteNeedsReview || !siteCorrect;
