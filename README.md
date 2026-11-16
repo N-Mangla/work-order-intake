@@ -1,42 +1,78 @@
 # Work order intake
 
-This project explores what happens when an AI-generated draft is only partly right. A service coordinator compares a proposed work order with the original request, fixes the draft, and approves the values that should be saved.
-
-The current milestone runs in sample mode. Both examples use fixed, synthetic drafts, so the same review cases work on every run without credentials.
+A service coordinator can turn a request into an editable work-order draft, compare it with the original note, and approve the corrected details. The two bundled examples show what happens when a draft is only partly right. With Ollama running locally, you can also generate a draft from a new request.
 
 ## Run locally
 
-Use Node.js 22 or newer and npm. Open Terminal in this folder.
+Use Node.js 22 or newer and npm. From the project folder, run:
 
 ```sh
-node -v
-npm -v
 npm ci
 npm run dev
 ```
 
-Open [localhost:3000](http://localhost:3000), or use the address printed by Next.js.
+Open [localhost:3000](http://localhost:3000), or use the address Next.js prints. The bundled examples work without Ollama or API credentials.
 
-## Try the two review cases
+## Try the review workflow
 
-1. Select **Missing schedule** and click **Create draft**. You can also paste this request:
+1. Select **Missing schedule** and click **Create draft**. The note asks for “Friday afternoon” and the exact date and time are blank.
+2. Click **Approve work order** with the schedule blank. The form asks for a date and time. Enter a test appointment, approve it, and reload the page to check that the row persists.
+3. Select **Wrong service site** and click **Create draft**. The sample proposes Bradford, where the reporting team is based. The original note places the printer at the Leeds office.
+4. Change the site to **Leeds office**, check **I’ve verified the service site**, enter a date and time, and approve. The new row should show your correction.
 
-   > The printer at the Leeds office keeps jamming. Can someone come Friday afternoon?
+Approved rows are stored in the current browser. The schedule uses site-local date and time text so it displays as entered.
 
-2. Click **Approve work order** with the schedule blank. The form should ask for both a date and a time, and the table should stay empty.
-3. Enter a synthetic appointment date and time and approve. Reload and check that the row persists.
-4. Select **Wrong service site** and create a draft. This sample deliberately proposes Bradford. The note says the Bradford team reported the issue at the Leeds office. Change the service site to **Leeds office**, choose a schedule, and approve. Check that the new row shows your correction.
+## Enable local extraction
 
-The approved rows live in this browser. The schedule is stored as site-local date and time text so it displays as entered.
+Install and start [Ollama](https://ollama.com/download), then download the model:
 
-## Read the code in this order
+```sh
+ollama pull qwen2.5:3b
+```
 
-1. **[`lib/samples.ts`](lib/samples.ts)** pairs an original note with a draft. Matching ignores extra whitespace. The review still displays the text as entered.
-2. **[`lib/work-orders.ts`](lib/work-orders.ts)** defines the editable fields and checks the current values before approval. A draft can have a missing schedule. An approval needs both date and time.
-3. **[`app/page.tsx`](app/page.tsx)** connects the form to the sample and saves an approved row. Review edits are held separately from the original note and the reusable fixture. A save failure leaves the draft open.
-4. **[`tests/work-orders.test.ts`](tests/work-orders.test.ts)** checks the sample matcher, missing fields, and a corrected draft.
+Create `.env.local` beside `package.json` and add:
 
-The browser owns the sample workflow. Next.js serves the page and assets. The next milestone adds a server-side extraction route to the same app.
+```dotenv
+OLLAMA_MODEL=qwen2.5:3b
+```
+
+Restart `npm run dev` and keep Ollama running. Paste a new request and click **Create draft**:
+
+> The scanner at the York warehouse will not power on. Could someone come Monday morning?
+
+The review screen labels model output **Generated locally** and bundled examples **Sample draft**. Compare the draft with the note, fix any missing or incorrect details, and confirm the exact appointment before approving.
+
+## How it works
+
+| File | Responsibility |
+|---|---|
+| [`app/page.tsx`](app/page.tsx) | Sends the request to the API, displays the original note and editable draft, and saves approved rows in the browser. A save failure leaves the draft open. |
+| [`app/api/extract/route.ts`](app/api/extract/route.ts) | Serves bundled examples and calls Ollama for new requests when configured. Validates structured output with Zod, checks quoted evidence against the note, and flags sites that need confirmation. |
+| [`lib/work-orders.ts`](lib/work-orders.ts) | Defines draft and work-order fields and validates the reviewer’s edits before approval. |
+| [`lib/samples.ts`](lib/samples.ts) | Pairs each bundled request with its fixed draft and matches notes with extra whitespace. |
+| [`tests/work-orders.test.ts`](tests/work-orders.test.ts) | Covers sample matching, missing approval fields, and approval after correcting a draft. |
+
+## Extraction evaluation
+
+I ran 25 synthetic held-out requests through `/api/extract` using `qwen2.5:3b`. The expected answers are in [`evals/held-out.json`](evals/held-out.json). After enabling local extraction, keep Next.js and Ollama running and use a second terminal:
+
+```sh
+node evals/run.mjs evals/held-out.json
+```
+
+| Metric | Result |
+|---|---:|
+| Site matches | 23/25 |
+| Issue wording matches | 16/25 |
+| Requested timing matches | 17/25 |
+| Missed site review flags | 0/9 |
+| Unnecessary site review flags | 4/16 |
+
+The scorer compares normalized text with the expected answers. Equivalent wording can still count as a mismatch. For example, the Norwich response kept the same appointment information but omitted the leading “on”. Five requests with a stated fault returned an empty issue.
+
+In one case, two records disagreed about whether a card reader was at the Stirling or Falkirk shop. The model chose Falkirk. The app asked the reviewer to confirm the site, giving them a chance to catch the unsupported choice.
+
+The review flag metrics cover the service site. Nine drafts needed site review because the source was missing or ambiguous, or because the extracted site was incorrect. Four of the other 16 drafts triggered an extra site confirmation.
 
 ## Verify a change
 
@@ -45,9 +81,3 @@ npm run lint
 npm test
 npm run build
 ```
-
-## Continue the build
-
-1. Add one provider in a server-side `POST /api/extract` route. Validate its structured output with Zod and apply review rules. Preserve the original note when extraction fails.
-2. Run a separate evaluation on 25–30 labelled synthetic notes. Record field accuracy, missed review flags, and a case where one warning hid a different missed error.
-3. Publish the repository and a sample-mode demo. Add the demo link, a review screenshot, and the measured evaluation results here.
